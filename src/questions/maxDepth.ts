@@ -1,6 +1,6 @@
 import { TreeNode } from "../classes/TreeNode";
 
-function dfs(curr: TreeNode | null): number {
+export function dfs(curr: TreeNode | null): number {
     if (!curr) {
         return 0;
     }
@@ -11,7 +11,7 @@ function dfs(curr: TreeNode | null): number {
     return 1 + Math.max(dfs(curr.left), dfs(curr.right));
 }
 
-function bfs(curr: TreeNode | null): number {
+export function bfs(curr: TreeNode | null): number {
     let queue: TreeNode[] = [];
     let result = 0;
 
@@ -38,6 +38,6 @@ function bfs(curr: TreeNode | null): number {
     return result;
 }
 
-function maxDepth(root: TreeNode | null): number {
+export function maxDepth(root: TreeNode | null): number {
     return bfs(root);
 }
