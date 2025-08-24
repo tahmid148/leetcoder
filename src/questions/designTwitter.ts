@@ -25,7 +25,6 @@ class TweetMaxHeap {
   }
 
   pop(): Tweet | undefined {
-    console.log("heap before popping", this.heap);
     if (this.heap.length <= 0) return;
     if (this.heap.length === 1) return this.heap.pop()!;
 
@@ -121,8 +120,25 @@ class Twitter {
 
   getNewsFeed(userId: number): number[] {
     if (!this.users.has(userId)) return [];
-
     let resultTweetIds: number[] = [];
+    let tweetHeap = new TweetMaxHeap();
+
+    const userTweets: Tweet[] = this.userTweets.get(userId)!;
+    for (const tweet of userTweets) {
+      tweetHeap.insert(tweet);
+    }
+    const followingUserIds: Set<number> = this.userToUser.get(userId)!;
+
+    for (const followingId of followingUserIds) {
+      const followingTweets = this.userTweets.get(followingId)!;
+      for (const tweet of followingTweets) {
+        tweetHeap.insert(tweet);
+      }
+    }
+
+    while (tweetHeap.size() > 0 && resultTweetIds.length < 10) {
+      resultTweetIds.push(tweetHeap.pop()!.id);
+    }
 
     return resultTweetIds;
   }
@@ -167,7 +183,7 @@ class Twitter {
 
 let twitter: Twitter = new Twitter();
 twitter.postTweet(1, 5);
-console.log("News Feed: ", twitter.getNewsFeed(1));
+// console.log("News Feed: ", twitter.getNewsFeed(1));
 twitter.follow(1, 2);
 twitter.postTweet(2, 6);
 console.log("News Feed: ", twitter.getNewsFeed(1));
