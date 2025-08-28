@@ -2,49 +2,61 @@ function findMedianSortedArrays(nums1: number[], nums2: number[]): number {
   const total = nums1.length + nums2.length;
   const sizeOfLeftPartition = Math.floor(total / 2);
 
-  const a = nums1.length < nums2.length ? nums1 : nums2; // Smaller array
-  const b = nums1.length < nums2.length ? nums2 : nums1;
+  let a = nums1,
+    b = nums2;
+  if (nums1.length > nums2.length) {
+    a = nums2;
+    b = nums1;
+  }
 
+  // Search on a -> Criteria: How much of a is on the first half of the merged array?
   let l = 0,
-    r = a.length - 1;
+    r = a.length;
 
   while (l <= r) {
-    const midpoint = Math.floor((l + r) / 2);
+    const midpointA = Math.floor((l + r) / 2);
+    const midpointB = sizeOfLeftPartition - midpointA;
 
-    const l1 = a[midpoint] ?? Number.MIN_SAFE_INTEGER;
-    const l2 = b[sizeOfLeftPartition - midpoint - 2] ?? Number.MIN_SAFE_INTEGER;
+    console.log(`l: ${l}, r: ${r}, midpoint: ${midpointA}`);
 
-    const r1 = a[midpoint + 1] ?? Number.MAX_SAFE_INTEGER;
-    const r2 = b[sizeOfLeftPartition - midpoint - 1] ?? Number.MAX_SAFE_INTEGER;
+    // The first half of the merged array will be made up on a[0:midpointA - 1] + b[0:midpointB - 1] a.k.a. a1 + b1
+    const a1 = a[midpointA - 1] ?? Number.MIN_SAFE_INTEGER;
+    const b1 = b[midpointB - 1] ?? Number.MIN_SAFE_INTEGER;
 
-    const leftMax = Math.max(l1, l2);
-    const rightMin = Math.min(r1, r2);
+    const a2 = a[midpointA] ?? Number.MAX_SAFE_INTEGER;
+    const b2 = b[midpointB] ?? Number.MAX_SAFE_INTEGER;
 
-    if (leftMax > rightMin) {
-      l = midpoint + 1;
-    } else {
+    if (a1 <= b2 && b1 <= a2) {
+      const firstHalfMax = Math.max(a1, b1);
+      const secondHalfMin = Math.min(a2, b2);
+      // We found the correct ordering
       if (total % 2 === 1) {
-        return rightMin;
+        // Odd case
+        return secondHalfMin;
       } else {
-        return (leftMax + rightMin) / 2;
+        // Even case
+        return (firstHalfMax + secondHalfMin) / 2;
       }
+    } else if (a1 > b2) {
+      // We need less of a in the first half of the merged array
+      r = midpointA - 1;
+    } else {
+      // We need more of a in the first half of the merged array
+      l = midpointA + 1;
     }
   }
 
-  if (total % 2 === 1) {
-    return a[0] ?? b[0];
-  }
-
-  return (a[a.length - 1] + b[0]) / 2;
+  return -1;
 }
 
-const nums1 = [-10, -9, -8];
-const nums2 = [1, 2];
+// const nums1 = [-10, -9, -8];
+// const nums2 = [1, 2];
+
 // const nums1 = [1, 2];
 // const nums2 = [3, 4];
 
-// const nums1 = [1, 3];
-// const nums2 = [2];
+const nums1 = [1, 3];
+const nums2 = [10, 11];
 
 // const nums1 = [1, 2, 3, 4, 5];
 // const nums2 = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
