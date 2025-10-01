@@ -31,7 +31,7 @@ export class TrieNode {
   }
 }
 
-class Trie {
+export class Trie {
   root: TrieNode;
 
   constructor() {
@@ -59,21 +59,18 @@ class Trie {
   }
 
   startsWith(prefix: string): boolean {
-    let currNode = this.root.get(prefix[0]);
-
-    for (let i = 1; i < prefix.length; i++) {
-      currNode = currNode?.get(prefix[i]);
-    }
-
-    return !!currNode;
+    if (!prefix.length) return true;
+    let node = this.root.get(prefix[0]);
+    for (let i = 1; i < prefix.length && node; i++) node = node.get(prefix[i]);
+    return !!node;
   }
 }
 
-// let trie: Trie = new Trie();
-// trie.insert("apple");
+let trie: Trie = new Trie();
+trie.insert("apple");
 
 // console.log(trie.search("apple")); // return True
 // console.log(trie.search("app")); // return False
-// console.log(trie.startsWith("app")); // return True
+console.log(trie.startsWith("app")); // return True
 // // trie.insert("app");
 // console.log(trie.search("app")); // return True
